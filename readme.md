@@ -23,12 +23,15 @@ Installing dependencies
 ```sh
 poetry install
 ```
+
 Running
 
 ```sh
 poetry run python duplicate_image_finder/duplicate_finder.py --show
+```
 
 Testing
+
 ```sh
 poetry run pytest
 ```
