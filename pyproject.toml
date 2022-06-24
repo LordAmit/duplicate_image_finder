@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "duplicate_image_finder"
 version = "0.1.0"
-description = ""
+description = "duplicate image finder helps you find duplicate or similar images as well as delete them."
 authors = ["Amit <lordamit@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "~3.9"
 Flask = "^2.1.2"
 Pillow = "^9.1.1"
 termcolor = "^1.1.0"
