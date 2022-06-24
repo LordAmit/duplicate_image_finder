@@ -19,7 +19,7 @@ class TestClass:
 
         expected_output = [(0, 2), (3, 4), (5, 7)]
 
-        output = dup.find_groups(input, diff_int, threshold)
+        output = dup.find_duplicate_groups_indices(input, diff_int, threshold)
         print(output)
         print(expected_output)
         assert output == expected_output
@@ -32,7 +32,7 @@ class TestClass:
 
         expected_output = [(0, 2), (3, 4), (5, 7)]
 
-        output = dup.find_groups(input, diff_int, threshold)
+        output = dup.find_duplicate_groups_indices(input, diff_int, threshold)
         print(output)
         print(expected_output)
         assert output == expected_output
@@ -44,7 +44,7 @@ class TestClass:
 
         expected_output = []
 
-        output = dup.find_groups(input, diff_int, threshold)
+        output = dup.find_duplicate_groups_indices(input, diff_int, threshold)
         print(output)
         print(expected_output)
         assert output == expected_output
@@ -57,7 +57,7 @@ class TestClass:
 
         expected_output = [(0, 3)]
 
-        output = dup.find_groups(input, diff_int, threshold)
+        output = dup.find_duplicate_groups_indices(input, diff_int, threshold)
         print(output)
         print(expected_output)
         assert output == expected_output
@@ -70,7 +70,7 @@ class TestClass:
 
         expected_output = [(0, 3)]
 
-        output = dup.find_groups(input, diff_int, threshold)
+        output = dup.find_duplicate_groups_indices(input, diff_int, threshold)
         print(output)
         print(expected_output)
         assert output == expected_output
@@ -82,7 +82,7 @@ class TestClass:
         #              [0,  1,  2,  3,  4,  5]
         expected_output = [(2, 3)]
 
-        output = dup.find_groups(input, diff_int, threshold)
+        output = dup.find_duplicate_groups_indices(input, diff_int, threshold)
         print(output)
         print(expected_output)
         assert output == expected_output
