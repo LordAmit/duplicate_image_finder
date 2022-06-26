@@ -408,15 +408,21 @@ def main():
     group.add_argument('--cleanup', action='store_true')
     parser.add_argument('--db')
     parser.add_argument('--parallel')
+
     args = parser.parse_args()
-    print(args)
+
 
     if args.db:
         DB_PATH = args.db
     else:
         DB_PATH = "./duplicate.sqlite"
+
+    cprint("no DB path specified, defaulting to ./duplicate.sqlite for storign records", "yellow")
+    cprint("please check the help (--help) and supply commands to duplicate_image_finder", "yellow")
     cursor: sqlite3.Cursor = connect_to_db(DB_PATH).cursor()
     create_table(cursor)
+
+
 
     if args.parallel:
         NUM_PROCESSES = int(args.parallel)
