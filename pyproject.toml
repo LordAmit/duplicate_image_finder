@@ -1,8 +1,20 @@
 [tool.poetry]
 name = "duplicate_image_finder"
-version = "0.1.0"
+version = "0.2.0"
 description = "duplicate image finder helps you find duplicate or similar images as well as delete them."
 authors = ["Amit <lordamit@gmail.com>"]
+readme = "readme.md"
+homepage = "https://github.com/LordAmit/duplicate_image_finder"
+repository = "https://github.com/LordAmit/duplicate_image_finder"
+keywords = [
+    "image",
+    "similar image",
+    "duplicate image",
+    "imagehash"
+]
+
+[tool.poetry.scripts]
+duplicate-image-finder = "entry:main"
 
 [tool.poetry.dependencies]
 python = "~3.9"
