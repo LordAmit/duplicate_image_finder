@@ -1,5 +1,6 @@
 import concurrent.futures
 import argparse
+from genericpath import exists
 import shutil
 import os
 from typing import Dict, List
@@ -15,6 +16,7 @@ from jinja2 import FileSystemLoader, Environment
 from more_itertools import chunked
 import webbrowser
 import math
+from pathlib import Path
 
 
 # code inspired from https://github.com/philipbl/duplicate-images.git
@@ -411,18 +413,24 @@ def main():
 
     args = parser.parse_args()
 
-
     if args.db:
         DB_PATH = args.db
     else:
-        DB_PATH = "./duplicate.sqlite"
-
-    cprint("no DB path specified, defaulting to ./duplicate.sqlite for storign records", "yellow")
+        home = str(Path.home())
+        dir_path = home+"/.duplicate_image_finder/"
+        DB_PATH = dir_path+"duplicates.sqlite"
+        if not Path.exists(Path(dir_path)):
+            Path.mkdir(Path(dir_path), exist_ok=True)
+        else:
+            cprint("Unknown error trying to create "+dir_path, "red")
+            cprint("check the code..", "red")
+    cprint("no DB path specified, defaulting to {} for storing image data".format(
+        DB_PATH), "yellow")
     cprint("please check the help (--help) and supply commands to duplicate_image_finder", "yellow")
+
     cursor: sqlite3.Cursor = connect_to_db(DB_PATH).cursor()
+
     create_table(cursor)
-
-
 
     if args.parallel:
         NUM_PROCESSES = int(args.parallel)
