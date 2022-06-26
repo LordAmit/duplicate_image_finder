@@ -154,10 +154,6 @@ def new_image_files(files, connect: sqlite3.Cursor):
             yield file
 
 
-def prepare_results(file_, hash_, file_size, image_size, capture_time):
-    pass
-
-
 def list_all_images(cursor: sqlite3.Cursor) -> List[ImageHolder]:
     image_holders: List[ImageHolder] = []
     query = '''
@@ -210,14 +206,6 @@ def add(paths, cursor: sqlite3.Cursor, num_processes=None):
 
         cprint("...done inserting "+str(result.rowcount), "blue")
         cursor.connection.commit()
-
-
-# def remove(paths, db):
-#     for path in paths:
-#         files = get_image_files(path)
-
-#         # for file in files:
-#         #     remove_image(file, db)
 
 
 def remove_image(file, cursor: sqlite3.Cursor):
@@ -304,6 +292,7 @@ def package_duplicates(entities: List[ImageHolder], groups: List):
         duplicate_groups.append(current_duplicate_group)
     return duplicate_groups
 
+
 def delete_picture(file_name, cursor: sqlite3.Cursor, trash="./Trash/"):
     cprint("Moving {} to {}".format(file_name, trash), 'yellow')
     if not os.path.exists(trash):
@@ -360,9 +349,6 @@ def display_duplicates(duplicates, cursor: sqlite3.Cursor, trash="./Trash/"):
         @app.route('/picture/<everything:file_name>', methods=['DELETE'])
         def delete_picture_(file_name, trash=trash):
             return str(delete_picture(file_name, cursor, trash))
-            # print(file_name)
-            pass
-
         app.run()
 
 
@@ -409,8 +395,10 @@ def simple_diff(i, j):
     return i-j
 
 
-if __name__ == '__main__':
-
+def main():
+    '''
+    entry point of app
+    '''
     parser = argparse.ArgumentParser(description='duplicate image finder')
 
     parser.add_argument('--add')
@@ -445,3 +433,7 @@ if __name__ == '__main__':
         cprint("cleaning up database of duplicates", "blue")
         all_images: List[ImageHolder] = list_all_images(cursor)
         cleanup_db(all_images, cursor)
+
+
+if __name__ == '__main__':
+    main()
