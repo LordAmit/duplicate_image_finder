@@ -307,7 +307,7 @@ def package_duplicates(entities: List[ImageHolder], groups: List):
 
 def delete_picture(file_name,
                    cursor: sqlite3.Cursor,
-                   trash=get_path_for_dot_duplicate()):
+                   trash=get_path_for_dot_duplicate()+".Trash/"):
     cprint("Moving {} to {}".format(file_name, trash), 'yellow')
 
     if not os.path.exists(trash):
@@ -333,7 +333,9 @@ def delete_duplicates(duplicates, db):
                                         len(results)), 'yellow')
 
 
-def display_duplicates(duplicates, cursor: sqlite3.Cursor, trash="./Trash/"):
+def display_duplicates(duplicates,
+                       cursor: sqlite3.Cursor,
+                       trash=get_path_for_dot_duplicate()+".Trash/"):
     from werkzeug.routing import PathConverter
 
     class EverythingConverter(PathConverter):
