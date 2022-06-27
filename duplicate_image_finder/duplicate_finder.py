@@ -6,13 +6,14 @@ import os
 from typing import Dict, List
 from flask import Flask
 from flask_cors import CORS
+import jinja2
 import magic
 from termcolor import cprint
 from tempfile import TemporaryDirectory
 import imagehash
 from PIL import Image, ExifTags
 import sqlite3
-from jinja2 import FileSystemLoader, Environment
+from jinja2 import FileSystemLoader, Environment, PackageLoader
 from more_itertools import chunked
 import webbrowser
 import math
@@ -73,6 +74,12 @@ def _get_capture_time(img):
         return exif["DateTimeOriginal"]
     except:
         return "Time unknown"
+
+
+def get_path_for_dot_duplicate() -> str:
+    home = str(Path.home())
+    dir_path = home+"/.duplicate_image_finder/"
+    return dir_path
 
 
 def get_image_files(path):
@@ -224,6 +231,9 @@ def remove_image(file, cursor: sqlite3.Cursor):
 def show(cursor: sqlite3.Cursor):
     cprint("showing duplicates", "blue")
     all_images: List[ImageHolder] = list_all_images(cursor)
+    if len(all_images) == 0:
+        cprint("no images found, exiting. Please add images first in the database by specifying a directory and please make sure it has images.", "red")
+        exit()
     duplicate_group_indices = find_duplicate_groups_indices(
         all_images, simple_diff, 10)
     duplicates = package_duplicates(all_images, duplicate_group_indices)
@@ -295,8 +305,11 @@ def package_duplicates(entities: List[ImageHolder], groups: List):
     return duplicate_groups
 
 
-def delete_picture(file_name, cursor: sqlite3.Cursor, trash="./Trash/"):
+def delete_picture(file_name,
+                   cursor: sqlite3.Cursor,
+                   trash=get_path_for_dot_duplicate()):
     cprint("Moving {} to {}".format(file_name, trash), 'yellow')
+
     if not os.path.exists(trash):
         os.makedirs(trash)
     try:
@@ -331,8 +344,15 @@ def display_duplicates(duplicates, cursor: sqlite3.Cursor, trash="./Trash/"):
     app.url_map.converters['everything'] = EverythingConverter
 
     def render(duplicates, current, total):
-        env = Environment(loader=FileSystemLoader('template'))
-        template = env.get_template('index.html')
+        try:
+            cprint("loading templates from site-packages", "blue")
+            env = Environment(loader=PackageLoader("duplicate_image_finder",
+                                                   'template'))
+            template = env.get_template('index.html')
+        except ValueError:
+            cprint("possibly not in site-packages environment", "red")
+            env = Environment(loader=FileSystemLoader('template'))
+            template = env.get_template('index.html')
         return template.render(duplicates=duplicates,
                                current=current,
                                total=total)
@@ -340,6 +360,7 @@ def display_duplicates(duplicates, cursor: sqlite3.Cursor, trash="./Trash/"):
     with TemporaryDirectory() as folder:
         # Generate all of the HTML files
         chunk_size = 25
+
         for i, dups in enumerate(chunked(duplicates, chunk_size)):
             with open('{}/{}.html'.format(folder, i), 'w') as f:
                 f.write(render(dups,
@@ -416,14 +437,13 @@ def main():
     if args.db:
         DB_PATH = args.db
     else:
-        home = str(Path.home())
-        dir_path = home+"/.duplicate_image_finder/"
-        DB_PATH = dir_path+"duplicates.sqlite"
-        if not Path.exists(Path(dir_path)):
-            Path.mkdir(Path(dir_path), exist_ok=True)
-        else:
-            cprint("Unknown error trying to create "+dir_path, "red")
-            cprint("check the code..", "red")
+
+        DB_PATH = get_path_for_dot_duplicate()+"duplicates.sqlite"
+        if not Path.exists(Path(get_path_for_dot_duplicate())):
+            Path.mkdir(Path(get_path_for_dot_duplicate()), exist_ok=True)
+        # else:
+        #     cprint("Unknown error trying to create "+dir_path, "red")
+        #     cprint("check the code..", "red")
     cprint("no DB path specified, defaulting to {} for storing image data".format(
         DB_PATH), "yellow")
     cprint("please check the help (--help) and supply commands to duplicate_image_finder", "yellow")
